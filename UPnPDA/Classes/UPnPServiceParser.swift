@@ -21,17 +21,17 @@ import UIKit
 public class UPnPServiceDescriptionDocument {
     
     /// 仅当服务带有动作时需要该字段
-    var actionList: [UPnPServiceAction]?
+    public var actionList: [UPnPServiceAction]?
     /// 必有字段 （服务可以不包含任何状态变量，字段为空）
-    var serviceStateTable: UPnPServiceStateTable?
+    public var serviceStateTable: UPnPServiceStateTable?
 }
 
 public class UPnPServiceAction: NSObject, KVCPropertyProtocol {
     
     /// 动作名称
-    @objc var name: String?
+    @objc public var name: String?
     /// 参数 仅当动作定义参数时需要该字段
-    var argumentList: [UPnPActionArgument]?
+    public var argumentList: [UPnPActionArgument]?
     
     func kvcAvaliableKeys() -> [String] {
         return ["name"]
@@ -49,13 +49,13 @@ public class UPnPServiceAction: NSObject, KVCPropertyProtocol {
 public class UPnPActionArgument: NSObject, KVCPropertyProtocol {
     
     /// 必有字段 参数名
-    @objc var name: String?
+    @objc public var name: String?
     
     /// 必有字段 无论变量是输入还是输出参数，取值必须为in 或者 out，所有的in变量必须列在所有out变量之后
-    @objc var direction: String?
+    @objc public var direction: String?
     
     /// 必有字段 必须是同一服务描述中状态变量的名称，声明本参数和某个状态变量有关。
-    @objc var relatedStateVariable: String?
+    @objc public var relatedStateVariable: String?
     
     
     func kvcAvaliableKeys() -> [String] {
@@ -77,7 +77,7 @@ public class UPnPActionArgument: NSObject, KVCPropertyProtocol {
 
 public class UPnPServiceStateTable: NSObject {
     
-    var stateVariableList: [UPnPStateVariable]?
+    public var stateVariableList: [UPnPStateVariable]?
 }
 
 public class UPnPStateVariable: NSObject, KVCPropertyProtocol {
@@ -87,21 +87,21 @@ public class UPnPStateVariable: NSObject, KVCPropertyProtocol {
      默认yes
      非标准状态变量，厂商可以自己决定
      */
-    @objc var sendEvents = "yes"
+    @objc public var sendEvents = "yes"
 
     /** 可选属性 事件发生时，该消息是采用单播还是多播方式发出，默认为no，
      为yes时，必须同时采用多播和单播
      */
-    @objc var multicast = "no"
+    @objc public var multicast = "no"
     
     /// 必有字段 状态变量名称
-    @objc var name: String?
+    @objc public var name: String?
     
     /// 必有字段 状态变量的取值类型
-    @objc var dataType: String?
+    @objc public var dataType: String?
     
     /// 默认值
-    @objc var defaultValue: String?
+    @objc public var defaultValue: String?
 
     /// 推荐使用 默认初始值 同时必须满足 allowedValueList 或者 allowedValueRange 的限制
     var allowedValueList: [UPnPStateAllowedValue]?
@@ -125,7 +125,7 @@ public class UPnPStateVariable: NSObject, KVCPropertyProtocol {
 
 public class UPnPStateAllowedValue: NSObject, KVCPropertyProtocol {
     
-    @objc var allowedValue: String?
+    @objc public var allowedValue: String?
     
     func kvcAvaliableKeys() -> [String] {
         return ["allowedValue"]
@@ -143,10 +143,10 @@ public class UPnPStateAllowedValue: NSObject, KVCPropertyProtocol {
 public class UPnPStateAllowedValueRange: NSObject, KVCPropertyProtocol {
     
     /// 保存时，统一保存为字符串类型，使用时
-    @objc var minimum: String?
-    @objc var maximum: String?
+    @objc public var minimum: String?
+    @objc public var maximum: String?
     /// 可选
-    @objc var step: String?
+    @objc public var step: String?
     
     
     func kvcAvaliableKeys() -> [String] {

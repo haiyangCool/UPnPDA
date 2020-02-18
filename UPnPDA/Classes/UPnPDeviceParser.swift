@@ -27,7 +27,7 @@ public class UPnPDeviceDescriptionDocument: NSObject {
     /// 该节点在 device 节点外
     /// 用于和其他的相对路径构建绝对路径的URL,这有设备厂商决定，在1.1版本中，已经去除该标签。
     /// 如果没有URLBase 节点，使用 获取location的 IP，和服务中的控制、事件订阅等相对地址进行拼接
-    @objc var URLBase: String? // depatch after UPnP 1.1
+    @objc public var URLBase: String? // depatch after UPnP 1.1
     
     /**
      必有字段  UPnP设备类型
@@ -36,37 +36,37 @@ public class UPnPDeviceDescriptionDocument: NSObject {
         由UPnP设备厂商指定的非标准设备，必须以 urn: 开头，后面跟厂商的域名，然后是 :device: 后面是设备类型和版本（整数）
         非标准设备 urn:mi-com:service:RController:1
      */
-    @objc var deviceType: String?
+    @objc public var deviceType: String?
 
     /// 必有字段 提供给用户的简短描述 有UPnP厂商决定
-    @objc var friendlyName: String?
+    @objc public var friendlyName: String?
     
     /// 必有字段 制造商名称 有UPnP厂商决定
-    @objc var manufacture: String?
+    @objc public var manufacture: String?
     
     /// 必有字段 制造商网站 有UPnP厂商决定
-    @objc var manufactureURL: String?
+    @objc public var manufactureURL: String?
     
     /// 推荐使用：给用户阅读的详细描述 有UPnP厂商决定
-    @objc var modelDescription: String?
+    @objc public var modelDescription: String?
     
     /// 必有字段 型号名称
-    @objc var modelName: String?
+    @objc public var modelName: String?
     
     /// 必有字段 型号字符串
-    @objc var modelNumber: String?
+    @objc public var modelNumber: String?
     
     /// 可选 有型号信息的网站URL
-    @objc var modelURL: String?
+    @objc public var modelURL: String?
     
     /// 必有字段 唯一设备名称（设备UUID）值以uuid: 开头
-    @objc var UDN: String?
+    @objc public var UDN: String?
     
     /// 可选 通用产品代码 12位全数字代码，用于确定销售包装，内容由厂商决定
-    @objc var UPC: String?
+    @objc public var UPC: String?
         
     /// 可选，当设备提供服务时
-    @objc var serviceBriefList: [UPnPServiceBrief]?
+    @objc public var serviceBriefList: [UPnPServiceBrief]?
     
     public override init() {}
 
@@ -99,7 +99,7 @@ public class UPnPServiceBrief: NSObject {
         由UPnP设备厂商指定的非标准设备，必须以 urn: 开头，后面跟厂商的域名，然后是 :device: 后面是设备类型和版本（整数）
         非标准设备 urn:mi-com:service:RController:1
      */
-     @objc var serviceType: String?
+     @objc public var serviceType: String?
     
     /** 必有字段  服务标识符，服务实例的唯一标识
         对于由UPnP定义的标准服务，必须以 urn:UPnP-org:serviceId: 开头，后面是服务id最后后缀
@@ -107,19 +107,19 @@ public class UPnPServiceBrief: NSObject {
         对于由UPnP设备厂商指定的非标准服务，必须以 urn: 开头，跟厂商域名，然后是 :serviceId:,接着是服务id后缀
         非标准服务：urn:domain-name:serviceId:AVTransport
      */
-    @objc var serviceId: String?
+    @objc public var serviceId: String?
 
     /// 必有字段 向服务发出控制消息的URL
-    @objc var controlURL: String?
+    @objc public var controlURL: String?
     
     /// 必有字段 订阅该服务的URL
-    @objc var eventSubURL: String?
+    @objc public var eventSubURL: String?
     
     /// 必有字段 (Service Control Protocol Description URL) , 是获取服务描述文档 -Service Description Document （SDD）的URL
-    @objc var SCPDURL: String?
+    @objc public var SCPDURL: String?
     
     /// 设备展示的URL
-    @objc var presentationURL: String?
+    @objc public var presentationURL: String?
     
     public override init() {}
 }
