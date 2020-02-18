@@ -1,0 +1,6 @@
+framework module Pods_UPnPDA_Example {
+  umbrella header "Pods-UPnPDA_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

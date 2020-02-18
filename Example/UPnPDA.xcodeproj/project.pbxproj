@@ -28,8 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00F506F975B7593F6A413D0B /* UPnPDA.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = UPnPDA.podspec; path = ../UPnPDA.podspec; sourceTree = "<group>"; };
-		109467108F2D6B58F62ED2B2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		00F506F975B7593F6A413D0B /* UPnPDA.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = UPnPDA.podspec; path = ../UPnPDA.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		109467108F2D6B58F62ED2B2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		2332887AC9EEC3DCEB3D707F /* Pods-UPnPDA_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPnPDA_Example.release.xcconfig"; path = "Target Support Files/Pods-UPnPDA_Example/Pods-UPnPDA_Example.release.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* UPnPDA_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPDA_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -43,7 +43,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		784CAD19B20285811019C85A /* Pods-UPnPDA_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPnPDA_Tests.release.xcconfig"; path = "Target Support Files/Pods-UPnPDA_Tests/Pods-UPnPDA_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		7D6368F9A334C1710305C393 /* Pods-UPnPDA_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPnPDA_Tests.debug.xcconfig"; path = "Target Support Files/Pods-UPnPDA_Tests/Pods-UPnPDA_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		7E7D343BAFB4A903D578FA9E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		7E7D343BAFB4A903D578FA9E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		7EDC6DC2C1ADD3AE750220F6 /* Pods_UPnPDA_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPnPDA_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A456582A3696832FCC771DC0 /* Pods-UPnPDA_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPnPDA_Example.debug.xcconfig"; path = "Target Support Files/Pods-UPnPDA_Example/Pods-UPnPDA_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		FD22F337B304AB429F0D12EF /* Pods_UPnPDA_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UPnPDA_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,7 +156,6 @@
 				7D6368F9A334C1710305C393 /* Pods-UPnPDA_Tests.debug.xcconfig */,
 				784CAD19B20285811019C85A /* Pods-UPnPDA_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -227,6 +226,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -313,10 +313,14 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UPnPDA_Example/Pods-UPnPDA_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AEXML/AEXML.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/UPnPDA/UPnPDA.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AEXML.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UPnPDA.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,0 +1,6 @@
+framework module UPnPDA {
+  umbrella header "UPnPDA-umbrella.h"
+
+  export *
+  module * { export * }
+}
