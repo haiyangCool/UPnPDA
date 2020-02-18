@@ -1,7 +1,7 @@
 PODS:
   - AEXML (4.5.0)
   - CocoaAsyncSocket (7.6.3)
-  - UPnPDA (0.1.0):
+  - UPnPDA (1.0.0):
     - AEXML
     - CocoaAsyncSocket
 
@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AEXML: 0e8f1d874fa033ca6b3909452a8bc362faad46e6
   CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
-  UPnPDA: e4a66c16836477b2b2daedc713fa17549b2158f1
+  UPnPDA: de6aba35f34d517812519e1d53bb343a530d3c51
 
 PODFILE CHECKSUM: 20900727a6215324b8b6d62b7f5fb82e47bb6031
 

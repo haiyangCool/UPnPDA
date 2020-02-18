@@ -179,7 +179,7 @@ public protocol UPnPAVTrasnportDelegate: NSObjectProtocol {
 
 open class UPnPAVTrasnport: NSObject {
     
-    weak var delegate: UPnPAVTrasnportDelegate?
+    public weak var delegate: UPnPAVTrasnportDelegate?
     private var deviceDesDoc: UPnPDeviceDescriptionDocument?
     private(set) var urlBase: String = ""
     private(set) var avTransportControlUrl: String = ""
@@ -620,12 +620,16 @@ extension UPnPAVTrasnport {
             
             if !avTransportControlUrl.hasPrefix("/") {
                 return urlBase+"/"+avTransportControlUrl
+            }else {
+                return urlBase + avTransportControlUrl
             }
         }
         
         if serviceType == RENDERINGCONTROLSERVICE {
             if !renderingControlUrl.hasPrefix("/") {
                 return urlBase+"/"+renderingControlUrl
+            }else {
+                return urlBase + renderingControlUrl
             }
         }
         return ""

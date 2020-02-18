@@ -250,17 +250,6 @@ extension UPnPServiceSearch {
                 self?.onError(error: error)
             }
             
-//            let dl = self.result.values.reversed()
-//            if dl.count > 0 {
-//                let d = dl[0]
-//                let serviceParser = UPnPServiceParser()
-//                serviceParser.parse(d, aimServiceType: searchTarget, successCallBack: { (sdd) in
-//
-//                }) { (err) in
-//
-//                }
-//            }
-            
             DispatchQueue.main.async {
                 if let delegate = self.delegate {
                     delegate.serviceSearch(self, upnpDevices: self.result.values.reversed() )

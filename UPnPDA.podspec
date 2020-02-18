@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'UPnPDA'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of UPnPDA.'
+  s.version          = '1.0.0'
+  s.summary          = 'UPnPDA is a UPnP Device Search And Control Tools'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+UPnPDA is a Tools to search aim service(Device),you can use it to search the Device(includes the aim Searvice),And it supported a AVTransport to Control device (DLNA Mode), setAVTransportURI , invoke play 、pause、stop ... actions.
                        DESC
 
   s.homepage         = 'https://github.com/haiyangCool/UPnPDA'
