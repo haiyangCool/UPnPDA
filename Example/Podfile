@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'UPnPDA_Example' do
+  pod 'UPnPDA', :path => '../'
+
+  target 'UPnPDA_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
