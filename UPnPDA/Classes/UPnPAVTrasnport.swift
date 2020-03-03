@@ -128,77 +128,44 @@ public struct UPnPMediaInfo {
     init() {}
 }
 
-public protocol UPnPAVTrasnportDelegate: NSObjectProtocol {
-    
-    /// 发出动作指令后， 如果UPnP设备发回执行成功的响应后，会回调响应的动作执行成功的回调方法
-    /// 如果UPnP设备执行动作指令失败， 则回调错误方法
-    /// 设置投屏地址执行成功
-    /// - Parameter result: success or faild
-    func setAVTransportUriActionRunSuccess()
-    
-    /// 播放执行执行成功
-    /// - Parameter isSuccess:
-    func playActionRunSuccess()
-    
-    /// 暂停动作执行成功
-    /// - Parameter isSuccess:
-    func pauseActionRunSuccess()
-    
-    /// 停止投屏成功
-    func stopActionRunSuccess()
-    
-    /// 下一个
-    func nextActionRunSuccess()
-    
-    /// 上一个
-    func previousActionRunSuccess()
+/// 动作执行完成
+public typealias UPnPActionComplete = (_ isSuccess: Bool,_ result: Any?, _ error: Error?) -> Void
 
-    /// 跳转播放
-    func seekActionRunSuccess()
-    
-    /// 获取当前的播放时间轴信息成功
-    /// - Parameter position:
-    func getPositionInfoActionRunSuccess(position: UPnPMediaPositionInfo)
-    
-    /// TransportInfo 状态 Play or Play
-    func getTransportInfoActionRunSuccess(state: String)
-    
-    /// 获取媒体资源信息成功
-    func getMediaInfoActionRunSuccess(mediaInfo: UPnPMediaInfo)
-    
-    /// 音量获取成功
-    /// - Parameter volume:
-    func getVolumeActionRunSuccess(volume: Int)
-    
-    /// 这只音量成功
-    func setVolumeActionRunSuccess()
-    /// 动作执行出错，错误信息
-    func error(_ avTransport: UPnPAVTrasnport, error: Error)
-    
-}
 
 open class UPnPAVTrasnport: NSObject {
     
-    public weak var delegate: UPnPAVTrasnportDelegate?
     private var deviceDesDoc: UPnPDeviceDescriptionDocument?
-    private(set) var urlBase: String = ""
+    private(set) var baseUrl: String = ""
     private(set) var avTransportControlUrl: String = ""
     private(set) var renderingControlUrl: String = ""
+    
+    
+    private var upnpActionComplete : UPnPActionComplete?
+ 
     public override init() {}
     
+    /// 设置将要控制的设备
     public func control(_ deviceDescriptionDocument: UPnPDeviceDescriptionDocument) {
         self.deviceDesDoc = deviceDescriptionDocument
         
-        if let baseUrl = self.deviceDesDoc?.URLBase,let serviceBriefList = self.deviceDesDoc?.serviceBriefList {
-            urlBase = baseUrl
-            
+        /// BaseUrl For High Version Must Not be Nil
+        if let baseUrlHighVersion = self.deviceDesDoc?.urlBase_for_highVersion {
+            baseUrl = baseUrlHighVersion
+        }
+        
+        if let baseUrlNormalVersion = self.deviceDesDoc?.URLBase {
+            baseUrl = baseUrlNormalVersion
+        }
+        
+        if let serviceBriefList = self.deviceDesDoc?.serviceBriefList {
+                    
             for serviceBrief in serviceBriefList {
                 if let serviceType = serviceBrief.serviceType, serviceType == AVTRANSPORTSERVICE {
                     if let controlUrl = serviceBrief.controlURL {
                         avTransportControlUrl = controlUrl
                     }
                 }
-                
+                        
                 if let serviceType = serviceBrief.serviceType, serviceType == RENDERINGCONTROLSERVICE {
                     if let controlUrl = serviceBrief.controlURL {
                         renderingControlUrl = controlUrl
@@ -206,6 +173,22 @@ open class UPnPAVTrasnport: NSObject {
                 }
             }
         }
+        
+    }
+    
+    /// 设置控制设备的地址
+    /// 如果通过其他方式获得了设备的控制地址（BaseUrl、AVTransport url , Rendering url）
+    /// 可以直接设置这些信息，完成投屏、控制功能
+    /// - Parameters:
+    ///   - url: 设备的ip地址和端口号组成的url地址  http://172.0.0.1/80
+    ///   - aAddress: AVTransport 控制，投屏，播放暂停，Seek,获取当前信息等
+    ///   - rAddress: Rendering , 设置音量 、获取音量
+    public func set(controlBaseUrl url: String,
+                    avTransportControlAddress aAddress: String,
+                    renderingControlAddress rAddress: String) {
+        baseUrl = url
+        avTransportControlUrl = aAddress
+        renderingControlUrl = rAddress
     }
    
 }
@@ -219,7 +202,8 @@ extension UPnPAVTrasnport {
     /// InstanceID:     id
     /// CurrentURI ： 播放地址
     /// CurrentURIMetaData: 可为空
-    public func setAVTransportUri(uri: String) {
+    public func setAVTransportUri(uri: String, complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("SetAVTransportURI")
         action.setArgument("0", for: "InstanceID")
@@ -230,8 +214,8 @@ extension UPnPAVTrasnport {
 
     /// 设置下一条数据
     /// - Parameter uri: location
-    public func setNextAVTransportUri(uri: String) {
-      
+    public func setNextAVTransportUri(uri: String, complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("SetNextAVTransportURI")
         action.setArgument("0", for: "InstanceID")
@@ -245,7 +229,8 @@ extension UPnPAVTrasnport {
     /// 输入参数列表：
     /// InstanceID:     id
     /// Speed ：播放为1
-    public func play() {
+    public func play(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Play")
         action.setArgument("0", for: "InstanceID")
@@ -257,7 +242,8 @@ extension UPnPAVTrasnport {
     /// 动作名：Pause
     /// 输入参数列表：
     /// InstanceID:     id
-    public func pause() {
+    public func pause(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Pause")
         action.setArgument("0", for: "InstanceID")
@@ -268,7 +254,7 @@ extension UPnPAVTrasnport {
     /// 动作名：Stop
     /// 输入参数列表：
     /// InstanceID:     id
-    public func stop() {
+    public func stop(complete: @escaping UPnPActionComplete) {        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Stop")
         action.setArgument("0", for: "InstanceID")
@@ -279,7 +265,8 @@ extension UPnPAVTrasnport {
     /// 动作名：Next
     /// 输入参数列表：
     /// InstanceID:     id
-    public func next() {
+    public func next(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Next")
         action.setArgument("0", for: "InstanceID")
@@ -290,7 +277,8 @@ extension UPnPAVTrasnport {
     /// 动作名：Previous
     /// 输入参数列表：
     /// InstanceID:     id
-    public func previous() {
+    public func previous(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Previous")
         action.setArgument("0", for: "InstanceID")
@@ -303,7 +291,8 @@ extension UPnPAVTrasnport {
     /// InstanceID:          id
     /// Channel:             Master
     /// DesiredVolume:  音量
-    public func setVolume(_ volum: Int) {
+    public func setVolume(_ volum: Int, complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: RENDERINGCONTROLSERVICE), serviceType: RENDERINGCONTROLSERVICE)
         action.setAction("SetVolume")
         action.setArgument("0", for: "InstanceID")
@@ -317,7 +306,8 @@ extension UPnPAVTrasnport {
     /// 输入参数列表：
     /// InstanceID:          id
     /// Channel:             Master
-    public func getVolume() {
+    public func getVolume(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: RENDERINGCONTROLSERVICE), serviceType: RENDERINGCONTROLSERVICE)
         action.setAction("GetVolume")
         action.setArgument("0", for: "InstanceID")
@@ -339,7 +329,8 @@ extension UPnPAVTrasnport {
     ///     <allowedValue>TAPE-INDEX</allowedValue>
     ///     <allowedValue>FRAME</allowedValue>
     /// Target
-    public func seek(time: String) {
+    public func seek(time: String, complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("Seek")
         action.setArgument("0", for: "InstanceID")
@@ -351,9 +342,9 @@ extension UPnPAVTrasnport {
     
     /// Seek real time
     /// - Parameter time: float value
-    public func seek(time: Float) {
+    public func seek(time: Float, complete: @escaping UPnPActionComplete) {
         
-        seek(time: realTime(time: time))
+        seek(time: realTime(time: time), complete: complete)
         
     }
     
@@ -362,7 +353,8 @@ extension UPnPAVTrasnport {
     /// 输入参数列表：
     /// InstanceID:          id
     /// NewPlayMode:    NORMAL \ REPEAT_ALL \ INTRO 三种模式
-    public func setPlayMode(_ mode: UPnPPlayMode = .NORMAL) {
+    public func setPlayMode(_ mode: UPnPPlayMode = .NORMAL, complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("SetPlayMode")
         action.setArgument("0", for: "InstanceID")
@@ -392,7 +384,8 @@ extension UPnPAVTrasnport {
     /// InstanceID:          id
     /// 输出参数列表: 在设备响应信息中解析获取
     /// NrTracks、MediaDuration、CurrentURI、CurrentURIMetaData、NextURI、NextURIMetaData、PlayMedium、RecordMedium、WriteStatus
-    public func getMediaInfo() {
+    public func getMediaInfo(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("GetMediaInfo")
         action.setArgument("0", for: "InstanceID")
@@ -410,7 +403,8 @@ extension UPnPAVTrasnport {
     /// TrackURI（播放地址）、
     /// RelTime、AbsTime -- 「播放时间」
     /// RelCount、AbsCount  「播放时间毫」
-    public func getPositionInfo() {
+    public func getPositionInfo(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("GetPositionInfo")
         action.setArgument("0", for: "InstanceID")
@@ -425,7 +419,8 @@ extension UPnPAVTrasnport {
     /// CurrentTransportState   : 当前状态
     /// CurrentTransportStatus ：OK
     /// CurrentSpeed:
-    public func getTransportInfo() {
+    public func getTransportInfo(complete: @escaping UPnPActionComplete) {
+        upnpActionComplete = complete
         var action = UPnPAction(controlUrl: controlUrl(serviceType: AVTRANSPORTSERVICE), serviceType: AVTRANSPORTSERVICE)
         action.setAction("GetTransportInfo")
         action.setArgument("0", for: "InstanceID")
@@ -500,7 +495,9 @@ extension UPnPAVTrasnport {
         
         for childElement in element.children {
             let elementName = childElement.name
-            print("动作名：\(childElement.xml)")
+        
+            print("UPnP Action Response to \(elementName)")
+            print("UPnP Action Response ：\n\(childElement.xml)")
             
             if elementName.hasSuffix("Fault") {
                 /// 动作执行失败后，返回的错误信息
@@ -513,77 +510,111 @@ extension UPnPAVTrasnport {
                 onError(upnpError)
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.SetAVTransportURIResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.SetAVTransportURIResponse.rawValue) {
                 /// 投屏连接成功
-                delegate.setAVTransportUriActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.PlayResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.PlayResponse.rawValue) {
+                
                 /// 播放成功
-                delegate.playActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.PauseResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.PauseResponse.rawValue) {
                 /// 暂停成功
-                delegate.pauseActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.StopResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.StopResponse.rawValue) {
                 /// 结束投屏成功
-                delegate.stopActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.SetVolumeResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.SetVolumeResponse.rawValue) {
                 /// 设置音量 成功
-                delegate.setVolumeActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.GetVolumeResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.GetVolumeResponse.rawValue) {
                 /// 获取音量成功
                 if let currentVolume = childElement["CurrentVolume"].value {
                     let volume = Int(currentVolume) ?? 0
-                    delegate.getVolumeActionRunSuccess(volume: volume)
+                    
+                    DispatchQueue.main.async {
+                        complete(true, volume, nil)
+                    }
+                    return
                 }
             
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.NextResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.NextResponse.rawValue) {
                 /// 下一个 成功
-                delegate.nextActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.PreviousResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.PreviousResponse.rawValue) {
                 /// 上一个 成功
-                delegate.previousActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.SeekResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.SeekResponse.rawValue) {
                 /// Seek 寻址播放
-                delegate.seekActionRunSuccess()
+                DispatchQueue.main.async {
+                    complete(true, nil, nil)
+                }
+                return
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.GetPositionInfoResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.GetPositionInfoResponse.rawValue) {
                 /// 获取播放位置信息成功
                 if  let duration = childElement["TrackDuration"].value, let playbackTime = childElement["RelTime"].value {
                     
                     let durationSeconds = timeValue(time: duration)
                     let playbackTimeSeconds = timeValue(time: playbackTime)
                     let positionInfo = UPnPMediaPositionInfo(durationStr: duration, duration: durationSeconds, playbackTimeStr: playbackTime, playbackTime: playbackTimeSeconds)
-                    
-                    delegate.getPositionInfoActionRunSuccess(position: positionInfo)
+                    DispatchQueue.main.async {
+                        complete(true, positionInfo, nil)
+                    }
+                    return
                 }
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.GetTransportInfoResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.GetTransportInfoResponse.rawValue) {
                 /// 获取当前播放状态 信息 成功
                 /// 播放 or 暂停
                 if let currentState = childElement["CurrentTransportState"].value {
-                    delegate.getTransportInfoActionRunSuccess(state: currentState)
+                    DispatchQueue.main.async {
+                        complete(true, currentState, nil)
+                    }
+                    return
                 }
                 
             }
             
-            if let delegate = delegate, elementName.hasSuffix(AVTransprotActionResponse.GetMediaInfoResponse.rawValue) {
+            if let complete = upnpActionComplete, elementName.hasSuffix(AVTransprotActionResponse.GetMediaInfoResponse.rawValue) {
                 /// 过去媒体资源信息
                 var mediaInfo = UPnPMediaInfo()
                 
@@ -600,8 +631,12 @@ extension UPnPAVTrasnport {
                 mediaInfo.playMedium = childElement["PlayMedium"].value
                 mediaInfo.recordMedium = childElement["RecordMedium"].value
                 mediaInfo.writeStatus = childElement["WriteStatus"].value
+                
+                DispatchQueue.main.async {
+                    complete(true, mediaInfo, nil)
+                }
+                return
 
-                delegate.getMediaInfoActionRunSuccess(mediaInfo: mediaInfo)
             }
             
         }
@@ -609,8 +644,10 @@ extension UPnPAVTrasnport {
     
     private func onError(_ error: Error) {
         
-        if let delegate = delegate {
-            delegate.error(self, error: error)
+        if let complete = upnpActionComplete {
+            DispatchQueue.main.async {
+                complete(false, nil, error)
+            }
         }
     }
     
@@ -619,17 +656,17 @@ extension UPnPAVTrasnport {
         if serviceType == AVTRANSPORTSERVICE {
             
             if !avTransportControlUrl.hasPrefix("/") {
-                return urlBase+"/"+avTransportControlUrl
+                return baseUrl+"/"+avTransportControlUrl
             }else {
-                return urlBase + avTransportControlUrl
+                return baseUrl + avTransportControlUrl
             }
         }
         
         if serviceType == RENDERINGCONTROLSERVICE {
             if !renderingControlUrl.hasPrefix("/") {
-                return urlBase+"/"+renderingControlUrl
+                return baseUrl+"/"+renderingControlUrl
             }else {
-                return urlBase + renderingControlUrl
+                return baseUrl + renderingControlUrl
             }
         }
         return ""

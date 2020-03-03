@@ -1,17 +1,20 @@
 PODS:
   - AEXML (4.5.0)
   - CocoaAsyncSocket (7.6.3)
-  - UPnPDA (1.0.1):
+  - SnapKit (4.2.0)
+  - UPnPDA (1.1.0):
     - AEXML
     - CocoaAsyncSocket
 
 DEPENDENCIES:
+  - SnapKit
   - UPnPDA (from `../`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AEXML
     - CocoaAsyncSocket
+    - SnapKit
 
 EXTERNAL SOURCES:
   UPnPDA:
@@ -20,8 +23,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AEXML: 0e8f1d874fa033ca6b3909452a8bc362faad46e6
   CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
-  UPnPDA: 50edd2aa3e1352361ffe4e692cfe712fad5a42ba
+  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  UPnPDA: 0032f5f3e386908d00f3d62d570e3b3c89be2e2d
 
-PODFILE CHECKSUM: 20900727a6215324b8b6d62b7f5fb82e47bb6031
+PODFILE CHECKSUM: f1acf238267eee04e7d36099124f0d2379111b9f
 
 COCOAPODS: 1.8.4

@@ -29,6 +29,15 @@ public class UPnPDeviceDescriptionDocument: NSObject {
     /// 如果没有URLBase 节点，使用 获取location的 IP，和服务中的控制、事件订阅等相对地址进行拼接
     @objc public var URLBase: String? // depatch after UPnP 1.1
     
+    /// 在UPnP 1.1 之后的版本中，URLBase 不再使用, 所以在这里使用IP,Port 组合成urlBase
+    public var ip: String?
+    public var port: String?
+    /// UPnP 1.1 之后使用
+    public var urlBase_for_highVersion: String?
+    
+    /// 服务类型:
+    public var serviceIdentifier: String?
+    
     /**
      必有字段  UPnP设备类型
         由UPnP定义的标准设备类型，必须以urn:schemas-upnp-org:device开始，后面带有设备类型和版本（整数）
@@ -161,6 +170,9 @@ public class UPnPDeviceParser: NSObject {
     /// URLBase
     var urlBase: String?
     
+    /// 在1.1版本中，已经移除了URLBase标签，从外部传递location，在URLBase 不存在时使用location解析ip和port作为替代
+    public var location: String?
+    
     /// 服务简述
     var serviceBriefList: [UPnPServiceBrief] = []
     
@@ -175,6 +187,8 @@ public class UPnPDeviceParser: NSObject {
                           faildCallBack faild: @escaping ParseDeviceFaildCallBack) {
         successCallBack = success
         faildCallBack = faild
+        
+        parseLocation(location)
         /// 解析 XML Data
         let xmlParser = XMLParser.init(data: data)
         xmlParser.delegate = self
@@ -184,9 +198,7 @@ public class UPnPDeviceParser: NSObject {
 
 extension UPnPDeviceParser: XMLParserDelegate {
     
-    public func parserDidStartDocument(_ parser: XMLParser) {
-//            print("start Document parser")
-        }
+    public func parserDidStartDocument(_ parser: XMLParser) {}
         
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         currentElementName = elementName
@@ -262,7 +274,7 @@ extension UPnPDeviceParser: XMLParserDelegate {
 // MARK: Private methods
 extension UPnPDeviceParser {
     
-    /// 设置 UPnP 设备的直接属性
+    /// 设置 UPnP 设备的属性
     /// - Parameter value:
     private func setDeviceElement(_ value: String) {
     
@@ -286,5 +298,30 @@ extension UPnPDeviceParser {
         if let faild = faildCallBack {
             faild(error)
         }
+    }
+    
+    private func parseLocation(_ locationStr: String?) {
+        /// http://192.168.0.101:63065/upnp/dev/xxxx....
+        if let locationAddress = locationStr, locationAddress.hasPrefix("http://") {
+            let newLocation = locationAddress.replacingOccurrences(of: "http://", with: "")
+            
+            let locationItems = newLocation.split(separator: "/")
+            if locationItems.count > 0 {
+                var ip = "172.0.0.1"
+                var port = "80"
+                let ipPort = locationItems[0]
+                let ipItems = ipPort.split(separator: ":")
+                if ipItems.count > 0 {
+                    ip = String(ipItems[0])
+                    deviceDescriptionDoc.ip = ip
+                }
+                if ipItems.count > 1 {
+                    port = String(ipItems[1])
+                    deviceDescriptionDoc.port = port
+                }
+                deviceDescriptionDoc.urlBase_for_highVersion = "http://\(ip):\(port)"
+            }
+        }
+      
     }
 }

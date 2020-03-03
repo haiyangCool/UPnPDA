@@ -4,6 +4,7 @@ use_frameworks!
 
 target 'UPnPDA_Example' do
   pod 'UPnPDA', :path => '../'
+  pod 'SnapKit'
 
   target 'UPnPDA_Tests' do
     inherit! :search_paths

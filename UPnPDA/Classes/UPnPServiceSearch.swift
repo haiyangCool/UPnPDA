@@ -151,9 +151,10 @@ open class UPnPServiceSearch: NSObject {
     /// 搜索结果，通过服务的唯一标识存放提供该服务的设备（嵌入式设备）
     private lazy var result: [String: UPnPDeviceDescriptionDocument] = [:]
     
-    public override init() {
-        
-    }
+    /// 搜索结果列表
+    private lazy var deviceList: [UPnPDeviceDescriptionDocument] = []
+    
+    public override init() {}
 }
 
 // MARK:- Public methods
@@ -165,10 +166,9 @@ extension UPnPServiceSearch {
     public func start() {
 
         updBind()
-        let s =  M_Search.info(searchTarget: searchTarget)
-        print("xi  = \(s)")
-        
-        guard let m_search_data = M_Search.info(searchTarget: searchTarget).data(using: .utf8) else {
+        let st = M_Search.info(searchTarget: searchTarget)
+        print("Search Target:\n\(st)")
+        guard let m_search_data = st.data(using: .utf8) else {
             onError(error: UPnPError(message: "M_SEARCH搜索消息编码失败"))
             return
         }
@@ -195,12 +195,12 @@ extension UPnPServiceSearch: GCDAsyncUdpSocketDelegate {
     
     /// 消息发送成功
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didSendDataWithTag tag: Int) {
-        print("消息发送成功： \(tag)")
+        print("UPnP Search Message Send Success")
     }
     
     /// 消息发送失败
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didNotSendDataWithTag tag: Int, dueToError error: Error?) {
-        onError(error: error ?? UPnPError(message: "消息发送失败"))
+        onError(error: error ?? UPnPError(message: "UPnP Search Message Send Faild"))
     }
     
     /// UDP 关闭
@@ -231,20 +231,23 @@ extension UPnPServiceSearch {
     /// 错误
     /// - Parameter message: error message
     private func onError(error: Error) {
-        print("the errpr : \(error)")
         if let delegate = delegate {
             delegate.serviceSearch(self, dueTo: error)
         }
     }
     
     private func parse(responseData: Data) {
-        
         /// 转化设备数据
-        func transformDevice(data: Data, serviceIdentifier id: String) {
+         func transformDevice(data: Data,
+                                    location: String,
+                                    serviceIdentifier id: String) {
             
             let parser = UPnPDeviceParser()
+            parser.location = location
             parser.parse(data, successCallBack: {[weak self] (ddd) in
                 self?.result[id] = ddd
+                ddd.serviceIdentifier = id
+                self?.addDevice(device: ddd)
                 
             }) {[weak self] (error) in
                 self?.onError(error: error)
@@ -252,11 +255,11 @@ extension UPnPServiceSearch {
             
             DispatchQueue.main.async {
                 if let delegate = self.delegate {
-                    delegate.serviceSearch(self, upnpDevices: self.result.values.reversed() )
+//                    delegate.serviceSearch(self, upnpDevices: self.result.values.reversed() )
+                    delegate.serviceSearch(self, upnpDevices: self.deviceList )
+
                 }
             }
-            
-           
         }
         /// 加载设备信息
         func loadDeviceInfo(address: String, serviceIdentifier id: String) {
@@ -265,7 +268,7 @@ extension UPnPServiceSearch {
                     let request = UPnPHTTPURLRequest(url: url)
                     let httpManager = UPnPHTTPManager()
                     httpManager.load(urlRequest: request, successCallBack: { (successData) in
-                        transformDevice(data: successData, serviceIdentifier: id)
+                         transformDevice(data: successData, location: address, serviceIdentifier: id)
                     }) {[weak self] (error) in
                         self?.onError(error: error)
                     }
@@ -274,7 +277,7 @@ extension UPnPServiceSearch {
         }
         
         guard let responseStr = String(data: responseData, encoding: .utf8) else {
-            onError(error: UPnPError(message: "搜索结果解析失败"))
+            onError(error: UPnPError(message: "Search Resulf Decode Faild"))
             return
         }
         /// 主动通知消息开始行 必须为NOTIFY
@@ -282,17 +285,20 @@ extension UPnPServiceSearch {
             let response = UPnPServiceAutoNotify(responseStr)
             /// 如果主动通知的服务可用，而且提供的服务类型为搜索服务类型
             /// 获取搜索到的设备的location，在此地址通过http获取设备描述文档: Device Description Document （DDD）
-            if let serviceAvaliable = response.serviceAvaliable, let serviceType = response.serviceType, serviceType == searchTarget, let location = response.location,let usn = response.serviceUniqueId {
+            if let serviceAvaliable = response.serviceAvaliable, let serviceType = response.serviceType, let location = response.location,let usn = response.serviceUniqueId {
                 
-                if serviceAvaliable == UPnPSERVICEAVALIABLE {
-                    loadDeviceInfo(address: location, serviceIdentifier: usn)
-                }else if (serviceAvaliable == UPnPSERVICEBYEBYE){
-                    /// 通知服务不可用时，把该服务对应的设备（逻辑设备）移除
-                    if result.keys.contains(usn) {
-                        result.removeValue(forKey: usn)
+                if searchTarget == M_SEARCH_Targert.all() || serviceType == searchTarget {
+                 
+                    if serviceAvaliable == UPnPSERVICEAVALIABLE {
+                        loadDeviceInfo(address: location, serviceIdentifier: usn)
+                    }else if (serviceAvaliable == UPnPSERVICEBYEBYE){
+                        /// 通知服务不可用时，把该服务对应的设备（逻辑设备）移除
+                        if result.keys.contains(usn) {
+                            result.removeValue(forKey: usn)
+                            removeDevice(identifier: usn)
+                        }
                     }
                 }
-
             }
         }
         /// 搜索响应开始行
@@ -305,5 +311,25 @@ extension UPnPServiceSearch {
             }
         }
     }
+
+    /// 添加搜索到的设备到设备列表
+       /// - Parameter device: 服务标识 ：设备信息
+       private func addDevice(device: UPnPDeviceDescriptionDocument) {
+           
+           deviceList.append(device)
+       }
+       
+       /// 移除服务标识的设备
+       /// - Parameter identifier: service id
+       private func removeDevice(identifier: String?) {
+           
+           if let id = identifier {
+               for index in 0..<deviceList.count {
+                   if let deviceId = deviceList[index].serviceIdentifier, deviceId == id {
+                       deviceList.remove(at: index)
+                   }
+               }
+           }
+       }
 
 }

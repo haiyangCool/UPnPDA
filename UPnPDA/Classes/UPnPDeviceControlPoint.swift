@@ -72,11 +72,10 @@ public struct UPnPAction {
     
     /// request 请求
     public mutating func request() -> URLRequest? {
-        print("xml = \(xml())")
+        
         if let url = URL(string: controlUrl), let actionName = name {
             
             let soapAction = "\"\(serviceType)#\(actionName)\""
-            
             var urlRequest = URLRequest(url: url)
             urlRequest.httpMethod = "POST"
             urlRequest.addValue("text/xml", forHTTPHeaderField: "Content-Type")
@@ -138,15 +137,11 @@ public class UPnPDeviceControlPoint: NSObject {
        
         var upnpAction = action
         if let request = upnpAction.request() {
-            
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if error != nil {
-                    print("self : = \(self)")
                     self.faild(error!)
                 }
                 if let data = data {
-                    print("self : = \(self)")
-
                     self.success(data)
                 }
             }
