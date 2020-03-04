@@ -245,9 +245,9 @@ extension UPnPServiceSearch {
             let parser = UPnPDeviceParser()
             parser.location = location
             parser.parse(data, successCallBack: {[weak self] (ddd) in
-                self?.result[id] = ddd
                 ddd.serviceIdentifier = id
-                self?.addDevice(device: ddd)
+                self?.addDevice(device: ddd, forServiceType: id)
+                self?.result[id] = ddd
                 
             }) {[weak self] (error) in
                 self?.onError(error: error)
@@ -287,7 +287,7 @@ extension UPnPServiceSearch {
             /// 获取搜索到的设备的location，在此地址通过http获取设备描述文档: Device Description Document （DDD）
             if let serviceAvaliable = response.serviceAvaliable, let serviceType = response.serviceType, let location = response.location,let usn = response.serviceUniqueId {
                 
-                if searchTarget == M_SEARCH_Targert.all() || serviceType == searchTarget {
+                if searchTarget == M_SEARCH_Targert.all() || searchTarget == serviceType {
                  
                     if serviceAvaliable == UPnPSERVICEAVALIABLE {
                         loadDeviceInfo(address: location, serviceIdentifier: usn)
@@ -314,9 +314,13 @@ extension UPnPServiceSearch {
 
     /// 添加搜索到的设备到设备列表
        /// - Parameter device: 服务标识 ：设备信息
-       private func addDevice(device: UPnPDeviceDescriptionDocument) {
-           
-           deviceList.append(device)
+    private func addDevice(device: UPnPDeviceDescriptionDocument, forServiceType type: String) {
+        
+        let target = result[type]
+        if target == nil {
+            deviceList.append(device)
+        }
+      
        }
        
        /// 移除服务标识的设备
