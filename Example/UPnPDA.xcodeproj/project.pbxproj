@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0CF1BD5F39D3A901733D06E2 /* Pods_UPnPDA_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EDC6DC2C1ADD3AE750220F6 /* Pods_UPnPDA_Example.framework */; };
+		371254AA240FA83200D44065 /* DemoAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371254A9240FA83200D44065 /* DemoAPIManager.swift */; };
+		371254AC240FA8F800D44065 /* DemoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371254AB240FA8F800D44065 /* DemoService.swift */; };
 		37BF4D612406045B00EF7B25 /* UPnPDeviceSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BF4D602406045B00EF7B25 /* UPnPDeviceSearchViewController.swift */; };
 		37BF4D63240609B900EF7B25 /* AVTransportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BF4D62240609B900EF7B25 /* AVTransportViewController.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -33,6 +35,8 @@
 		00F506F975B7593F6A413D0B /* UPnPDA.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = UPnPDA.podspec; path = ../UPnPDA.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		109467108F2D6B58F62ED2B2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		2332887AC9EEC3DCEB3D707F /* Pods-UPnPDA_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPnPDA_Example.release.xcconfig"; path = "Target Support Files/Pods-UPnPDA_Example/Pods-UPnPDA_Example.release.xcconfig"; sourceTree = "<group>"; };
+		371254A9240FA83200D44065 /* DemoAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPIManager.swift; sourceTree = "<group>"; };
+		371254AB240FA8F800D44065 /* DemoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoService.swift; sourceTree = "<group>"; };
 		37BF4D602406045B00EF7B25 /* UPnPDeviceSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UPnPDeviceSearchViewController.swift; sourceTree = "<group>"; };
 		37BF4D62240609B900EF7B25 /* AVTransportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVTransportViewController.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* UPnPDA_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPDA_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,6 +113,8 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				37BF4D62240609B900EF7B25 /* AVTransportViewController.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				371254AB240FA8F800D44065 /* DemoService.swift */,
+				371254A9240FA83200D44065 /* DemoAPIManager.swift */,
 				37BF4D602406045B00EF7B25 /* UPnPDeviceSearchViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
@@ -322,6 +328,8 @@
 				"${PODS_ROOT}/Target Support Files/Pods-UPnPDA_Example/Pods-UPnPDA_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AEXML/AEXML.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/HiNetWork/HiNetWork.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/UPnPDA/UPnPDA.framework",
 			);
@@ -329,6 +337,8 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AEXML.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HiNetWork.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UPnPDA.framework",
 			);
@@ -345,8 +355,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				37BF4D612406045B00EF7B25 /* UPnPDeviceSearchViewController.swift in Sources */,
+				371254AA240FA83200D44065 /* DemoAPIManager.swift in Sources */,
 				37BF4D63240609B900EF7B25 /* AVTransportViewController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				371254AC240FA8F800D44065 /* DemoService.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

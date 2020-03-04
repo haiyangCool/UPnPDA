@@ -8,9 +8,17 @@
 
 import UIKit
 import UPnPDA
+import HiNetWork
 private let UPnPDeviceCellId = "UPnPDeviceCellId"
 class UPnPDeviceSearchViewController: UIViewController {
 
+    
+    lazy var demoApiManager: DemoAPIManager = {
+        let demoApiManager = DemoAPIManager()
+        demoApiManager.resultDelegate = self
+        demoApiManager.paramsSource = self
+        return demoApiManager
+    }()
     
     lazy var table: UITableView = {
         let table = UITableView(frame: view.bounds, style: .plain)
@@ -33,6 +41,10 @@ class UPnPDeviceSearchViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         view.addSubview(table)
+        
+        ///
+        let _ = demoApiManager.loadData()
+        
         serviceSearcher.start()
     
         
@@ -79,12 +91,12 @@ extension UPnPDeviceSearchViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let deviceDecDoc = upnpDeviceList[indexPath.row]
-        
-        let avTransPortVc = AVTransportViewController()
-        avTransPortVc.deviceDesDoc = deviceDecDoc
-        navigationController?.show(avTransPortVc, sender: self)
-        
+//        let deviceDecDoc = upnpDeviceList[indexPath.row]
+//        
+//        let avTransPortVc = AVTransportViewController()
+//        avTransPortVc.deviceDesDoc = deviceDecDoc
+//        navigationController?.show(avTransPortVc, sender: self)
+//        
         
     }
     
@@ -100,6 +112,32 @@ extension UPnPDeviceSearchViewController: UPnPServiceSearchDelegate {
     
     func serviceSearch(_ serviceSearch: UPnPServiceSearch, dueTo error: Error) {
         print(" Search Occur Error \(error)")
+    }
+    
+    
+}
+
+
+extension UPnPDeviceSearchViewController: HiAPIManagerResultDelegate, HiAPIManagerParameterDelegate {
+    func success(_ manager: HiBaseAPIManager) {
+        let data:Dictionary<String,Any>? = manager.fetchData(with:nil) as? Dictionary<String, Any>
+        print("result = \(String(describing: data))")
+        
+    }
+    
+    func faild(_ manager: HiBaseAPIManager) {
+        let faildType = manager.faildType()
+        print("Faild = \(faildType)")
+        
+    }
+    
+    func parameters(_ manager: HiBaseAPIManager) -> [String : String]? {
+         return [
+                "apiKey":"123fd90af7904388804555f1090d71db",
+                "categoryId":"1",
+                "topType":"1",
+                "limit":"50"
+               ]
     }
     
     

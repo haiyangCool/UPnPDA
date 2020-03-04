@@ -1,0 +1,6 @@
+framework module HiNetWork {
+  umbrella header "HiNetWork-umbrella.h"
+
+  export *
+  module * { export * }
+}

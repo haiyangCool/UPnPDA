@@ -1,12 +1,16 @@
 PODS:
   - AEXML (4.5.0)
   - CocoaAsyncSocket (7.6.3)
+  - HiNetWork (1.0.1):
+    - ReachabilitySwift
+  - ReachabilitySwift (5.0.0)
   - SnapKit (4.2.0)
   - UPnPDA (1.1.0):
     - AEXML
     - CocoaAsyncSocket
 
 DEPENDENCIES:
+  - HiNetWork
   - SnapKit
   - UPnPDA (from `../`)
 
@@ -14,6 +18,8 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AEXML
     - CocoaAsyncSocket
+    - HiNetWork
+    - ReachabilitySwift
     - SnapKit
 
 EXTERNAL SOURCES:
@@ -23,9 +29,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AEXML: 0e8f1d874fa033ca6b3909452a8bc362faad46e6
   CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  HiNetWork: 04053dcb63100a3981ebc7f1d9717874d70462e4
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   UPnPDA: 0032f5f3e386908d00f3d62d570e3b3c89be2e2d
 
-PODFILE CHECKSUM: f1acf238267eee04e7d36099124f0d2379111b9f
+PODFILE CHECKSUM: 2612afc07bfbfdff56482d724d22e5006d0adf84
 
 COCOAPODS: 1.8.4
