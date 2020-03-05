@@ -19,6 +19,31 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'UPnPDA'
 ```
+## Usage
+
+Search UPnP Service
+
+```swift 
+lazy var serviceSearcher: UPnPServiceSearch = {
+    let search = UPnPServiceSearch()
+    search.searchTarget = M_SEARCH_Targert.all()
+    search.delegate = self
+    return search
+}()
+```
+And in Delegate methods you can get the result
+
+```swift
+func serviceSearch(_ serviceSearch: UPnPServiceSearch, upnpDevices devices: [UPnPDeviceDescriptionDocument]) {
+    /// the device list
+}
+
+func serviceSearch(_ serviceSearch: UPnPServiceSearch, dueTo error: Error) {
+    print(" Search Occur Error \(error)")
+}
+```
+
+you can find some DLNA details in Demo 
 
 ## Author
 
