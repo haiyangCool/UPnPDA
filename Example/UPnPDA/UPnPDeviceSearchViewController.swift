@@ -91,12 +91,12 @@ extension UPnPDeviceSearchViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-//        let deviceDecDoc = upnpDeviceList[indexPath.row]
-//        
-//        let avTransPortVc = AVTransportViewController()
-//        avTransPortVc.deviceDesDoc = deviceDecDoc
-//        navigationController?.show(avTransPortVc, sender: self)
-//        
+        let deviceDecDoc = upnpDeviceList[indexPath.row]
+        
+        let avTransPortVc = AVTransportViewController()
+        avTransPortVc.deviceDesDoc = deviceDecDoc
+        navigationController?.show(avTransPortVc, sender: self)
+        
         
     }
     
