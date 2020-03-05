@@ -71,7 +71,7 @@ public struct M_SEARCH_Targert{
     /// - Parameters:
     ///   - serviceType: serviceType
     ///   - code: version code
-    static func serviceType(_ serviceType: String, version code: Int) -> String {
+    static public func serviceType(_ serviceType: String, version code: Int) -> String {
         return "urn:schemas-upnp-org:service:\(serviceType):\(code)"
     }
     
